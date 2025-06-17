@@ -3,6 +3,7 @@ Learn,Roadmap,Projects
 Om Nalinde:Linked In profile and below resources
 
 https://www.linkedin.com/in/that-aum/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_recent_activity_content_view%3B89fPTFz2T3K%2F8OislsLrvg%3D%3D
+
 I highly recommend to read this if you're looking to get started in AI or you're looking for a career transition
 
 This books talks about - 
@@ -114,8 +115,8 @@ Then go and get your hands dirty by re-doing the already made projects.
 GitHub Resource code link:https://github.com/Shubhamsaboo
 https://github.com/Shubhamsaboo/awesome-llm-apps
 
-AIAgents-Projects.jpg
-Here're my favourites - 
+![Alt text](AIAgents-Projects.jpg)
+- Here're my favourites - 
 
 📌 BEGINNNER AI AGENTS
 ➜ 𝗔𝗜 𝗕𝗹𝗼𝗴 𝘁𝗼 𝗣𝗼𝗱𝗰𝗮𝘀𝘁 𝗔𝗴𝗲𝗻𝘁 
@@ -143,14 +144,15 @@ Here're my favourites -
 🔗 https://lnkd.in/gZdMVica
 ➜ 𝗔𝗜 𝗙𝗶𝗻𝗮𝗻𝗰𝗶𝗮𝗹 𝗖𝗼𝗮𝗰𝗵 𝗔𝗴𝗲𝗻𝘁 
 🔗 https://lnkd.in/gD5NjHh5
-➜ 𝗔𝗜 𝗣𝗿𝗼𝗱𝘂𝗰𝘁 𝗟𝗮𝘂𝗻𝗰𝗵 𝗜𝗻𝘁𝗲𝗹𝗹𝗶𝗴𝗲𝗻𝗰𝗲 𝗔𝗴𝗲𝗻𝘁 
-🔗 https://lnkd.in/gaxvmQsP
-➜ 𝗔𝗜 𝗠𝗲𝗻𝘁𝗮𝗹 𝗪𝗲𝗹𝗹𝗯𝗲𝗶𝗻𝗴 𝗔𝗴𝗲𝗻𝘁 
-🔗 https://lnkd.in/g-HSVSQT
-➜ 𝗔𝗜 𝗠𝗲𝗲𝘁𝗶𝗻𝗴 𝗔𝗴𝗲𝗻𝘁 
-🔗 https://lnkd.in/g8-M4ZXU
-➜ 𝗔𝗜 𝗦𝗲𝗹𝗳-𝗘𝘃𝗼𝗹𝘃𝗶𝗻𝗴 𝗔𝗴𝗲𝗻𝘁 
-🔗 https://lnkd.in/gVAreMdn
+- ➜ 𝗔𝗜 𝗣𝗿𝗼𝗱𝘂𝗰𝘁 𝗟𝗮𝘂𝗻𝗰𝗵 𝗜𝗻𝘁𝗲𝗹𝗹𝗶𝗴𝗲𝗻𝗰𝗲 𝗔𝗴𝗲𝗻𝘁 
+ 🔗 https://lnkd.in/gaxvmQsP
+- ➜ 𝗔𝗜 𝗠𝗲𝗻𝘁𝗮𝗹 𝗪𝗲𝗹𝗹𝗯𝗲𝗶𝗻𝗴 𝗔𝗴𝗲𝗻𝘁 
+ 🔗 https://lnkd.in/g-HSVSQT
+- ➜ 𝗔𝗜 𝗠𝗲𝗲𝘁𝗶𝗻𝗴 𝗔𝗴𝗲𝗻𝘁 
+ 🔗 https://lnkd.in/g8-M4ZXU
+- ➜ 𝗔𝗜 𝗦𝗲𝗹𝗳-𝗘𝘃𝗼𝗹𝘃𝗶𝗻𝗴 𝗔𝗴𝗲𝗻𝘁 
+ 🔗 https://lnkd.in/gVAreMdn
+
 
 
 https://www.linkedin.com/posts/that-aum_%F0%9D%97%A7%F0%9D%97%B5%F0%9D%97%B2-%F0%9D%97%AF%F0%9D%97%B2%F0%9D%98%80%F0%9D%98%81-%F0%9D%97%BF%F0%9D%97%BC%F0%9D%97%AE%F0%9D%97%B1%F0%9D%97%BA%F0%9D%97%AE%F0%9D%97%BD-%F0%9D%98%81%F0%9D%97%BC-%F0%9D%97%B9%F0%9D%97%B2%F0%9D%97%AE%F0%9D%97%BF%F0%9D%97%BB-activity-7338420539662716928-ge8P?utm_source=share&utm_medium=member_desktop&rcm=ACoAABdaXb8BPJl_ljt8CqUXdJcHI4qUYfZgF9M
