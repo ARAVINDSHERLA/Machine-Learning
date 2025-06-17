@@ -1,0 +1,180 @@
+{
+  "name": "Calendar Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ac41f1bf-b0ba-4599-8f3c-68cfc984160e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=Important context:\nCurrent date and time is {{ $now.toString() }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "edc5d5fe-e25c-46d3-9130-b7a112cdb75f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        280
+      ],
+      "id": "f90e7641-ee11-49de-ab2a-06f2346ca464",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "leonvanzyldev@gmail.com",
+          "mode": "list",
+          "cachedResultName": "leonvanzyldev@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        340,
+        280
+      ],
+      "id": "42e73442-3841-4d59-bf9d-4f4c7af0096a",
+      "name": "Create Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jtETmXN18MD5g9m2",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "leonvanzyldev@gmail.com",
+          "mode": "list",
+          "cachedResultName": "leonvanzyldev@gmail.com"
+        },
+        "limit": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Limit', ``, 'number') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        460,
+        280
+      ],
+      "id": "1defcb59-aab3-4bb5-864f-2aa660dc9fd6",
+      "name": "Get Events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jtETmXN18MD5g9m2",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "Please get my calendar events for 1 March"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

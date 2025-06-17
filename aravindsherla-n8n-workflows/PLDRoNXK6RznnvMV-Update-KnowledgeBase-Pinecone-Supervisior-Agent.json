@@ -1,0 +1,149 @@
+{
+  "name": "Update KnowledgeBase-Pinecone-Supervisior Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Load files into KB",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "File",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c0b6f35d-5ad0-4d19-82d9-19f4b262b883",
+      "name": "On form submission",
+      "webhookId": "4f79336d-0264-49af-975b-6871c7a301b5"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-tutorial",
+          "mode": "list",
+          "cachedResultName": "n8n-tutorial"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "6be7f494-8d04-413e-a1bb-670436c19623",
+      "name": "Pinecone Vector Store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        140,
+        200
+      ],
+      "id": "336b2491-daad-4a44-b777-20b51d28c1cf",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        360,
+        200
+      ],
+      "id": "929688a0-74ae-4f6c-8d2b-0fd78daf4447",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        360,
+        340
+      ],
+      "id": "0e3bc9f6-fcd6-41aa-b57c-76acdd83516b",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

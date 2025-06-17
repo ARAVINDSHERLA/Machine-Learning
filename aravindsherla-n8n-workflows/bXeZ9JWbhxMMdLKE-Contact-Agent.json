@@ -1,0 +1,220 @@
+{
+  "name": "Contact Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e5f9b4ce-6b7a-42e7-88b6-a828365e38e5",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "92445ff5-1a0b-4b6c-ab50-9a0bda6abb90",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        280
+      ],
+      "id": "4b874063-77db-4be1-bbfe-6478c592ba14",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "fields": [
+          "*"
+        ],
+        "useQuery": true,
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.googleContactsTool",
+      "typeVersion": 1,
+      "position": [
+        220,
+        280
+      ],
+      "id": "65e24a76-1715-4d57-96e2-597b0d8eb261",
+      "name": "Get Contacts",
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "6yhsqeZwiwENBwbz",
+          "name": "Google Contacts account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "familyName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Family_Name', ``, 'string') }}",
+        "givenName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Given_Name', ``, 'string') }}",
+        "additionalFields": {
+          "emailsUi": {
+            "emailsValues": [
+              {
+                "type": "home",
+                "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Value', ``, 'string') }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleContactsTool",
+      "typeVersion": 1,
+      "position": [
+        360,
+        280
+      ],
+      "id": "2f4f6c1a-925d-46a1-9709-2c75974c8b8b",
+      "name": "Create Contact",
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "6yhsqeZwiwENBwbz",
+          "name": "Google Contacts account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "contactId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Contact_ID', ``, 'string') }}",
+        "fields": [
+          "names",
+          "emailAddresses"
+        ],
+        "updateFields": {
+          "emailsUi": {
+            "emailsValues": [
+              {
+                "type": "home",
+                "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Value', ``, 'string') }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleContactsTool",
+      "typeVersion": 1,
+      "position": [
+        500,
+        280
+      ],
+      "id": "e48a61c4-00bd-4aa1-8ce7-893f07afa8ba",
+      "name": "Update contacts",
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "6yhsqeZwiwENBwbz",
+          "name": "Google Contacts account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "Update Mary's email to mary.test@test.com"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

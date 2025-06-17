@@ -1,0 +1,343 @@
+{
+  "name": "my-functions",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## The My Functions MCP calls this sub-workflow every time.\nA subworkflow is a separate workflow that can be called by other workflows and is able to receive parameters.\nLearn more about sub-workflows **[here](https://docs.n8n.io/flow-logic/subworkflows/)**",
+        "height": 1060,
+        "width": 1260,
+        "color": 7
+      },
+      "id": "60646f19-a331-41b8-8a50-3589c19d27a6",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -220,
+        20
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "function_name"
+            },
+            {
+              "name": "payload",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "id": "d70a4488-f30e-47e5-96ff-47c38c267d79",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -180,
+        480
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "ab18304c-4f73-430f-b9fa-2ce4d098e1fa",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.function_name }}",
+                    "rightValue": "uppercase"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "UPPERCASE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "606bda79-f401-4de2-be9d-51368c794479",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.function_name }}",
+                    "rightValue": "lowercase"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "LOWERCASE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "4b22e689-e652-47d2-b737-7be00da9f185",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.function_name }}",
+                    "rightValue": "random_user_data"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "RANDOM DATA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "27a75a2c-8058-4a7c-85c1-898cabeac4a1",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.function_name }}",
+                    "rightValue": "joke"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "JOKE"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "42ed024a-5a85-4270-94f8-2136cff80a86",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        40,
+        460
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42333f26-8e14-438a-9965-eec31bf4b6a3",
+              "name": "converted_text",
+              "type": "string",
+              "value": "={{ $json.payload.text.toUpperCase() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b87e1c36-40b4-4838-8f8c-a11f218781a0",
+      "name": "Convert Text to Upper Case",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        380,
+        120
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42333f26-8e14-438a-9965-eec31bf4b6a3",
+              "name": "converted_text",
+              "type": "string",
+              "value": "={{ $json.payload.text.toLowerCase() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e83ba40f-ce66-41bc-8b00-273b7723b61d",
+      "name": "Convert Text to Lower Case",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        380,
+        320
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "category": "randomData",
+        "randomDataCount": "={{ $json.payload.number }}"
+      },
+      "id": "ad9610f3-d3ba-4fd2-9c7f-0d9974fef8f7",
+      "name": "Random user data",
+      "type": "n8n-nodes-base.debugHelper",
+      "position": [
+        380,
+        620
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b4548cbe-f3fc-4911-901a-d73182d710a9",
+              "name": "First name",
+              "type": "string",
+              "value": "={{ $json.firstname }}"
+            },
+            {
+              "id": "6e573a27-ef03-4254-8f9b-2c471e1540c2",
+              "name": "Last name",
+              "type": "string",
+              "value": "={{ $json.lastname }}"
+            },
+            {
+              "id": "ac5b5806-bf8e-4e1a-a47d-e7180d31e98a",
+              "name": "Email",
+              "type": "string",
+              "value": "={{ $json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e2654e3d-fe4c-47f8-9b67-4a93c0637865",
+      "name": "Return only some fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        600,
+        620
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "=https://official-joke-api.appspot.com/jokes/random/{{ $json.payload.number }}",
+        "options": {}
+      },
+      "id": "4a22041b-2202-4f4d-9e4a-78b47cbf27e0",
+      "name": "Joke Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        380,
+        820
+      ],
+      "typeVersion": 4.2
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Convert Text to Upper Case",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert Text to Lower Case",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Random user data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Joke Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Random user data": {
+      "main": [
+        [
+          {
+            "node": "Return only some fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "payload": {
+            "number": 5
+          },
+          "function_name": "joke"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": null
+}

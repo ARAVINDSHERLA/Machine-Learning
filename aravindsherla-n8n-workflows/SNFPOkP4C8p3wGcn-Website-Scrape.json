@@ -1,0 +1,180 @@
+{
+  "name": "Website Scrape",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5756c916-6b92-40e8-9668-e7dce2fbeaa9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://www.tanla.com/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "73c83654-605e-4176-9aeb-85adc390f635",
+      "name": "WebSite Scrape"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "ebe156d6-cdf1-4521-a61b-e3a9cca7a5a4",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=write a five line sentences on what this site about:Here is the website data is: {{ $json.data }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "7b79bb68-0dc8-43fd-b83f-67025e11b5eb",
+      "name": "WebScrape Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {
+          "maxTokens": 3000,
+          "temperature": 0.7,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        220
+      ],
+      "id": "d0625651-d878-404e-b5d2-7ccf917457a7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "sherla.aravindkumar@gmail.com",
+        "subject": "Web Site Scrape",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1020,
+        0
+      ],
+      "id": "e53ae0e2-d906-4c20-a840-d898fe2f618c",
+      "name": "Email:Site-Summary",
+      "webhookId": "1ebc577e-3f31-4e8a-9a20-adf25ccbca76",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pjdIJryUI0G1EffS",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "WebSite Scrape",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WebSite Scrape": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "WebScrape Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "WebScrape Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WebScrape Agent": {
+      "main": [
+        [
+          {
+            "node": "Email:Site-Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

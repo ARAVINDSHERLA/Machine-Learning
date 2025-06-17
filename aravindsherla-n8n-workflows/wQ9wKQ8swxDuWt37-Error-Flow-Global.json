@@ -1,0 +1,32 @@
+{
+  "name": "Error Flow-Global",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7fdf7e25-10d1-457f-897c-74d2cf719821",
+      "name": "Error Trigger"
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

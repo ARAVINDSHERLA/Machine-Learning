@@ -1,0 +1,425 @@
+{
+  "name": "Supabase Vector Store Automation-Large Datasets",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "15sCZ9c09zYryf0WcUuLmJNgGpzDYIJbc",
+          "mode": "list",
+          "cachedResultName": "knowledge-base",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/15sCZ9c09zYryf0WcUuLmJNgGpzDYIJbc"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        300
+      ],
+      "id": "e51db63e-c7a3-4fcc-a080-c802383a8676",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "f38ELHOeGv7YjyMV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -80,
+        300
+      ],
+      "id": "23f21c4e-ca7d-4905-8941-9d4f6c1a6169",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "f38ELHOeGv7YjyMV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "enableBOM": true
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        160,
+        280
+      ],
+      "id": "ad541f6e-b68b-4a26-9189-2c9283f6f6d6",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const row = item.json;\n\n  const combinedRow = Object.entries(row)\n    .map(([key, val]) => `${key}: ${val}`)\n    .join(' | ');\n\n  return {\n    json: {\n      combinedRow\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        380,
+        280
+      ],
+      "id": "957360e6-b44d-417e-85f2-2efad5b1e04c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        740,
+        160
+      ],
+      "id": "92053ca5-f072-4c40-b432-0247ef6ff48e",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "3UkVmmzUvgbMYfnt",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        760,
+        480
+      ],
+      "id": "a91918da-90ee-485a-884e-9cacce8e7663",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        860,
+        720
+      ],
+      "id": "fd138176-0c89-4726-b8ec-9766e208cb6f",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "separator": "[]][][][}}}}}}",
+        "chunkSize": 10000000000
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        860,
+        1040
+      ],
+      "id": "1539d617-2634-4d66-98f2-ae4a91c17547",
+      "name": "Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -920,
+        -140
+      ],
+      "id": "885c9839-baa6-493d-ae68-4d95959957fb",
+      "name": "When chat message received",
+      "webhookId": "b5e4e623-c51e-4fa2-b8c9-4b9c5c258a7a"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User Message: {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "Whenever recommending properties, always include all the information about them, like address, description, price, size, bedrooms, and more."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -700,
+        -140
+      ],
+      "id": "12d0720e-d5ff-4dd2-9ab0-f6424e2987f2",
+      "name": "Real Estate Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -680,
+        80
+      ],
+      "id": "0eef2823-6418-4158-bc76-9ba0151c27e7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -520,
+        80
+      ],
+      "id": "8fbaecef-6a35-4652-8de7-2810dac43a5f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "knowledge_base",
+        "toolDescription": "Semantically search the data and return the best-matching properties.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "topK": 3,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        -220,
+        -120
+      ],
+      "id": "dcbbd632-81d4-4de6-9315-c61616610607",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "3UkVmmzUvgbMYfnt",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        80
+      ],
+      "id": "90a081ad-f79e-480b-97f1-5d95eb5620b2",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Real Estate Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Real Estate Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Real Estate Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Real Estate Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,461 @@
+{
+  "name": "AI Image&Video Agent-Replicate ai API",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        240
+      ],
+      "id": "4dc02957-4b6e-4336-ad3f-a35f05d2b5b2",
+      "name": "When chat message received",
+      "webhookId": "4f70a248-6d8a-4092-a321-16ab28c9f090"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI agent that generates AI images and videos by making HTTP requests to AI generation models.\n\nInstructions:\n\nDetermine the required AI model.\nUse the AI_Generation_Docs tool to find the correct API call information.\nConstruct the JSON body for the API call, including only parameters for which you have information. Remove any fields (such as start_image, input_image, or reference_image) if you do not have values for them.\nUse the Send_HTTP_Request tool to send the API request.\nAfter receiving the response from Send_HTTP_Request, extract the following fields from the response:\noutput\nstatus\nget\nOutput:\nReturn only a valid JSON object with these exact keys and no additional text, explanation, or formatting. The output must match this format exactly:\n\n{\n\"output\": \"<the output URL or not ready>\",\n\"status\": \"<the status of the response>\",\n\"get\": \"<the 'get' url>\"\n}\n\nRules:\n\n-Always use the API key: Bearer r8_MkuWAWblTk8cWRlzlQuQUZtk8qDKFeX1m0euH\n-If a start/input/reference image is referenced in the JSON body but not provided, remove that entire line from the JSON body.\nImportant:\n-Do not include any extra text, markdown, or explanation. Only return the JSON object as shown above.\n-If the output from the response is 'null' change this to a string that says 'not ready'"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -740,
+        240
+      ],
+      "id": "00f1312a-a833-4845-a368-21c250827755",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -960,
+        500
+      ],
+      "id": "73932eae-7c2a-4ee4-86f4-7509cbca34e7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -800,
+        500
+      ],
+      "id": "243978f6-9373-4afa-857f-a97881ac87b0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Using information about the HTTP call, autofill out the HTTP call and create the image",
+        "method": "POST",
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Name', ``, 'string') }}",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Name', ``, 'string') }}",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            },
+            {
+              "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Name', ``, 'string') }}",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('JSON', ``, 'json') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -460,
+        500
+      ],
+      "id": "e193cae4-aa20-48c2-91d2-9c4a26ce5bbf",
+      "name": "Send_HTTP_Request"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get information about the HTTP request for the image generation APIs",
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1ZUztQEj-_1XN075h68INccXK29UoIPXQCjISP9JZwmY/edit?usp=sharing"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        500
+      ],
+      "id": "177ccd49-661e-46ea-969a-6e35521f9562",
+      "name": "AI_Generation_Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "uaZyvsvNnbYIUPtq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "97cf507a-adb2-47fc-8e5f-d38451fffdca",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "not ready",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -220,
+        160
+      ],
+      "id": "587f4ea0-6bd5-429b-8158-45db8eba020a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1b791fa-fb49-4c7a-bd0f-f523df03a205",
+              "name": "Content_Link",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        620,
+        180
+      ],
+      "id": "a5c44d7a-d875-431c-95c1-2bc692f11c7f",
+      "name": "Content_Link"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('values').item.json.get }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer r8_MkuWAWblTk8cWRlzlQuQUZtk8qDKFeX1m0euH"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        0
+      ],
+      "id": "64d660c6-016a-4931-9c78-b31c02135c26",
+      "name": "Get_Image"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3c3ce56b-a4c2-4e2f-b9ec-f85bd541ba1c",
+      "name": "Wait",
+      "webhookId": "9992e1e5-1f34-40a0-87cb-14ea3581cfd5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2043e0da-2440-44f2-b62a-855b41d2bedf",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "[null]",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        0
+      ],
+      "id": "0820b37c-a3bc-481f-8e49-fbdf2ea64384",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dc055359-d6fc-4796-bf1e-3bb7aaa7b6bc",
+              "name": "output",
+              "value": "={{ $json.output[0].response.output.output }}",
+              "type": "string"
+            },
+            {
+              "id": "756c7373-3f84-41db-8b8a-b28667b3c404",
+              "name": "status",
+              "value": "={{ $json.output[0].response.output.output }}",
+              "type": "string"
+            },
+            {
+              "id": "628e32e2-ac19-4445-8bff-14945c5aa7db",
+              "name": "get",
+              "value": "={{ $json.output[0].response.output.get }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -380,
+        240
+      ],
+      "id": "5cc50fa4-6d6b-4a97-8818-2c9ad618ea3a",
+      "name": "values"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"action\": \"parse\",\n    \"response\": {\n      \"output\": {\n        \"output\": \"not ready\",\n        \"status\": \"starting\",\n        \"get\": \"https://api.replicate.com/v1/predictions/dy13s2xsv5rme0cq60mtyas1rm\"\n      }\n    }\n  }\n]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        500
+      ],
+      "id": "45307c6e-ca2f-46cc-8e4d-9153a817b0d0",
+      "name": "Structured Output Parser1"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send_HTTP_Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI_Generation_Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Content_Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get_Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Image": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Content_Link",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "values": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

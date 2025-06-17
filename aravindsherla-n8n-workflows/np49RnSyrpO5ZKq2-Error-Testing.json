@@ -1,0 +1,87 @@
+{
+  "name": "Error Testing",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "71f945d4-9378-49e8-b548-9df9a4a9250c",
+      "name": "When chat message received",
+      "webhookId": "239b747e-322a-4840-b17c-44f88cf2618a"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -100
+      ],
+      "id": "0d419856-b981-40e5-819c-e93fd4a06ddb",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        140
+      ],
+      "id": "d9df41d6-0629-428f-b4c0-17cf506c5ae7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "wQ9wKQ8swxDuWt37"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

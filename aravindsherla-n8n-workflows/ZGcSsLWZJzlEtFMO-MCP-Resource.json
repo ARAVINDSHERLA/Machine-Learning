@@ -1,0 +1,410 @@
+{
+  "name": "MCP Resource",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -380,
+        -20
+      ],
+      "id": "83e023b2-f093-401b-8f89-c2baa5a491c1",
+      "name": "When chat message received",
+      "webhookId": "1eb77037-6393-412e-8af9-4787959a7776"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User Message: {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant, get the today appointment"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        -20
+      ],
+      "id": "9b033d3c-0050-4589-aa37-3628b9dc409d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        160
+      ],
+      "id": "76b13817-3d70-4e64-9c26-c2a198f387c0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -100,
+        180
+      ],
+      "id": "1358034e-f9dc-4d11-a122-9168666b0d7e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "=sherla.aravindkumar@gmail.com",
+          "mode": "id"
+        },
+        "start": "={{ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": false,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        420,
+        0
+      ],
+      "id": "5758b454-5eb6-4b6a-8ce2-fae48fddb848",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jtETmXN18MD5g9m2",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "sherla.aravindkumar@gmail.com",
+          "mode": "id"
+        },
+        "timeMax": "={{ $now.plus(12,'hours') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        680,
+        80
+      ],
+      "id": "ac02579d-d779-4053-bfc2-9078cf251cb0",
+      "name": "Google Calendar2",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jtETmXN18MD5g9m2",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "value": "=sherla.aravindkumar@gmail.com",
+          "mode": "id"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        860,
+        0
+      ],
+      "id": "0c5ccce1-7f75-4e1c-af52-ec635c0dd781",
+      "name": "Google Calendar3",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jtETmXN18MD5g9m2",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "sherla.aravindkumar@gmail.com",
+          "mode": "list",
+          "cachedResultName": "sherla.aravindkumar@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        540,
+        20
+      ],
+      "id": "299f826b-d442-4cce-a899-1dbe46d10b90",
+      "name": "Google Calendar1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "jtETmXN18MD5g9m2",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "sherla.aravindkumar@gmail.com",
+        "subject": "Project Discussion",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        520
+      ],
+      "id": "a5f6a62e-d715-4d0e-b42e-82fd52faa489",
+      "name": "Gmail",
+      "webhookId": "8da2f527-e340-4634-84c9-56d939e9a1bc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pjdIJryUI0G1EffS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        500
+      ],
+      "id": "6af631c8-f6c2-4b34-b392-1c38f1a26987",
+      "name": "Gmail1",
+      "webhookId": "5cf5e2f9-afc5-4006-b52b-ccd0d2b0227b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pjdIJryUI0G1EffS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "744080b6-c10c-49d2-aeca-00f027a387ee"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -220
+      ],
+      "id": "8efcd544-9c4e-4d58-b616-8c61548bd96c",
+      "name": "Calendar -MCP Server Trigger",
+      "webhookId": "744080b6-c10c-49d2-aeca-00f027a387ee"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://aravindsherla.app.n8n.cloud/mcp/744080b6-c10c-49d2-aeca-00f027a387ee/sse"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        20,
+        200
+      ],
+      "id": "c3b465e9-2890-4de2-8968-ba1ede72105b",
+      "name": "Calendar-MCP Client"
+    },
+    {
+      "parameters": {
+        "path": "c874df85-64bb-44d4-80cd-9c6e924d71eb"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        540,
+        280
+      ],
+      "id": "3c04bec5-1c54-4635-a33e-1ea9a654e8f3",
+      "name": "Mail-MCP Server Trigger",
+      "webhookId": "c874df85-64bb-44d4-80cd-9c6e924d71eb"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "https://aravindsherla.app.n8n.cloud/mcp/c874df85-64bb-44d4-80cd-9c6e924d71eb/sse"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        200,
+        200
+      ],
+      "id": "fff966ae-aa53-47d5-9a1e-8679e03d3d03",
+      "name": "Mail-MCP Client"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar -MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar -MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar -MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar -MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Mail-MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Mail-MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar-MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mail-MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 3,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

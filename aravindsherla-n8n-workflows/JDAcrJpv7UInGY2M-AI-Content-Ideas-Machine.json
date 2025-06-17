@@ -1,0 +1,1430 @@
+{
+  "name": "AI Content Ideas Machine",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1400,
+        -500
+      ],
+      "id": "63240810-ca4e-42f4-925f-06d0220ee90b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1400,
+        -260
+      ],
+      "id": "cc0e3685-dae9-431a-85f4-2d11e1ef07ca",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appLILwDL1ygahdRK",
+          "mode": "list",
+          "cachedResultName": "AI Content Ideas Machine",
+          "cachedResultUrl": "https://airtable.com/appLILwDL1ygahdRK"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblO3s8jlKifZzHki",
+          "mode": "list",
+          "cachedResultName": "Subreddits",
+          "cachedResultUrl": "https://airtable.com/appLILwDL1ygahdRK/tblO3s8jlKifZzHki"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1100,
+        -500
+      ],
+      "id": "071e81de-6c17-4a71-b7f3-fcfabe9752f6",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "alwpetOLM14qVeQU",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Subreddit"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        -500
+      ],
+      "id": "682d19fa-de07-428d-8aba-a1565add960b",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ff822aee-0b7f-4563-b6ec-08d6490faba7",
+              "name": "Subreddit",
+              "value": "={{ JSON.stringify($json.Subreddit) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -660,
+        -500
+      ],
+      "id": "eae569a6-075d-4c50-bd3e-d9f2e7ec84e3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -220,
+        -500
+      ],
+      "id": "7a4aadd7-32f8-487b-9f76-5fcb30498ec1",
+      "name": "Wait",
+      "webhookId": "a431c7bb-1b43-49fb-8c36-2ee9a3b30ef9"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/comchat~reddit-api-scraper/runs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer apify_api_GOF0sOd6IJ5984kmTLmk3atTTGflEN4AiOwO"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"over18\": true,\n    \"proxy\": {\n        \"useApifyProxy\": true,\n        \"apifyProxyGroups\": [\n            \"RESIDENTIAL\"\n        ]\n    },\n    \"resultsLimit\": 5,\n    \"searchList\": [\n        \"n8n\"\n    ],\n    \"sortBy\": \"new\",\n    \"subRedditList\":{{ $json.Subreddit }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -440,
+        -500
+      ],
+      "id": "502d3b68-da20-4c27-bcd2-b2a1b3d34f8d",
+      "name": "MakeRequest-Scrape"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items?clean=true ",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer apify_api_GOF0sOd6IJ5984kmTLmk3atTTGflEN4AiOwO"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        40,
+        -500
+      ],
+      "id": "8d889fa2-b707-4c5d-a621-ae6507a493e1",
+      "name": "get Output"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "83b6e2d7-36e3-4e25-a203-2289079e61fe",
+              "name": "Text",
+              "value": "={{ $json.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "a866b4df-715f-4638-9bed-4945d8f46d93",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "b34d9995-d048-48ba-8748-dbd1ed8572ae",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        260,
+        -500
+      ],
+      "id": "1031e69a-5a76-4177-9855-477da525123b",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Title:{{ $json.title }}\nText: {{ $json.Text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a senior content strategist on Aravind Kumar’s AI automation team. Your job is to review Reddit posts and determine whether they contain a repurposable idea that can be transformed into original content for Yashica’s audience.\n\nYou are not approving the Reddit post for reposting. You’re approving whether it has content potential — a pain point, frustration, insight, or angle we can respond to, reframe, or repurpose in our voice.\n\nBack Context:\n\nAravind Kumar is an AI Automation Expert and founder of an AI automation agency. She builds intelligent systems for businesses using no-code tools like n8n, Make.com, and others. She also consults companies on AI adoption.\n\nShe creates content to:\n- Teach people how to build automations and AI systems\n- Help business owners understand how to apply AI in real scenarios\n- Stay on top of AI and automation news that matters\n- Share insights from her consulting and client work\n\nHer tone is practical, confident, and no-fluff. Her content simplifies complexity without dumbing it down. Her audience is made up of:\n- Business owners\n- Automation consultants\n- Agency operators\n- AI-curious entrepreneurs\n\nHer content formats include:\n- YouTube long-form tutorials or breakdowns (visual, step-by-step, actionable)\n- LinkedIn insight-driven posts, often using reframes, micro-case studies, or hard-earned lessons\n- News breakdowns and strategic commentary around new tools or industry shifts\n\nApprove a Reddit post if:\n- It expresses a real-world problem, misunderstanding, frustration, or curiosity related to AI, automation, no-code, or system building\n- It reflects a question the audience might also have\n- It offers an opportunity to create a tutorial, share an insight, or comment on industry trends\n- It can be reimagined, reframed, or responded to — not simply copied\n\nDo not approve if:\n- The post is promotional, surface-level, or adds no real angle\n- It doesn’t align with our topics (e.g., irrelevant personal stories, crypto hype, generic startup fluff)\n- There’s no unique insight or entry point for our audience\n\nPlatform Fit Logic:\nOnly select platforms where the idea truly belongs:\n\nYouTube: Ideal if it can be shown visually (e.g., a walkthrough, tutorial, demo, or teardown)\nLinkedIn: Strong fit if it can be reframed into an insight, a business lesson, or a thought-provoking angle\n\nOutput Format:\n\nIf approved:\n{\n  \"approved\": true,\n  \"reason\": \"This post expresses confusion around connecting OpenAI to n8n for lead scoring. That’s a common client problem and worth breaking down.\",\n  \"platform_fit\": [\"YouTube\", \"LinkedIn\"],\n  \"notes\": \"For YouTube: a tutorial video showing how to use GPT to score inbound leads inside n8n. For LinkedIn: a value post about how automation isn’t just tech — it’s judgment. Reframe the AI part as decision support.\"\n}\n\nIf not approved:\n{\n  \"approved\": false,\n  \"reason\": \"The post is a vague product plug with no actionable insight or relatable challenge.\",\n  \"platform_fit\": [],\n  \"notes\": \"\"\n}\n\nFinal Reminder:\nYou're not a summarizer — you're a filter for what makes it into our content pipeline. Look for signal, not noise. If the post gives us something to teach, reframe, or solve — approve it."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -500
+      ],
+      "id": "1110863f-7f92-4e12-b941-25ab29a94456",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        280,
+        -220
+      ],
+      "id": "64c681f5-83d3-403f-b980-c4a5afc1caa7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        440,
+        -240
+      ],
+      "id": "f6dc4f19-945b-4674-8c19-03bbad49fe8b",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"approved\": true,\n  \"reason\": \"The user is struggling to get a GPT-powered n8n workflow generator to work — it's both a pain point and curiosity trigger. It signals a gap in understanding we can fill, while showing off real AI + no-code capabilities.\",\n  \"platform_fit\": [\"YouTube\", \"LinkedIn\"],\n  \"notes\": \"On YouTube, we could turn this into a walk-through video: 'What GPT can and can’t automate inside n8n workflows' — show the real use-case, explain what broke, how to fix, and when not to rely on AI. On LinkedIn, frame it as a micro-story: 'Why AI doesn't mean hands-off — and where human judgment still matters in automation design.'\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        -60
+      ],
+      "id": "ee2d7bb5-ef8e-4944-b1b3-650842d4e45f",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        440,
+        -80
+      ],
+      "id": "5e2b0c40-cc69-419c-affb-85d16c4a40d5",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.approved }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "b648f327-2f2b-4595-a284-3c77e5839c0d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Approved"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2a9826a9-b15d-483e-bda4-7f07e66d1d7c",
+                    "leftValue": "={{ $json.output.approved }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Not Approved"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        840,
+        -500
+      ],
+      "id": "a021e7ef-bbe4-4468-a689-c14d288fc746",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appLILwDL1ygahdRK",
+          "mode": "list",
+          "cachedResultName": "AI Content Ideas Machine",
+          "cachedResultUrl": "https://airtable.com/appLILwDL1ygahdRK"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloQhCCr9JGuUpcU",
+          "mode": "list",
+          "cachedResultName": "Rejected",
+          "cachedResultUrl": "https://airtable.com/appLILwDL1ygahdRK/tbloQhCCr9JGuUpcU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Post Title": "={{ $('Edit Fields1').item.json.title }}",
+            "Post URL": "={{ $('Edit Fields1').item.json.url }}",
+            "Post Content": "={{ $('Edit Fields1').item.json.Text }}",
+            "Rejection Reason": "={{ $('AI Agent').item.json.output.reason }}",
+            "Coming From?": "={{ $('get Output').item.json.metaData.subRedditName }}",
+            "Notes": "={{ $('AI Agent').item.json.output.notes }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Post Title",
+              "displayName": "Post Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Post URL",
+              "displayName": "Post URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Post Content",
+              "displayName": "Post Content",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Rejection Reason",
+              "displayName": "Rejection Reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Coming From?",
+              "displayName": "Coming From?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Created",
+              "displayName": "Created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        840,
+        0
+      ],
+      "id": "0a922970-b08b-47c8-a98e-bab0b690d6a0",
+      "name": "Rejected-Ledger-Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "alwpetOLM14qVeQU",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.stringify($json.output.platform_fit) }}",
+                    "rightValue": "YouTube",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "21923955-7134-47f6-b95f-a7e310a8e611"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "YouTube"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "59f82ed8-21cc-4dbb-bbaa-065f2a84df58",
+                    "leftValue": "={{ JSON.stringify($json.output.platform_fit) }}",
+                    "rightValue": "LinkedIn",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LinkedIn"
+            }
+          ]
+        },
+        "options": {
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1060,
+        -600
+      ],
+      "id": "688c79a1-e2e9-4b1a-8cca-5b008f8f401b",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Title:{{ $('Edit Fields1').item.json.title }}\n\nText:{{ $('Edit Fields1').item.json.Text }}\n\nReason for Approval: {{ $json.output.reason }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are Aravind Kumar’s YouTube content strategist. Your role is to turn approved Reddit posts into long-form YouTube video concepts that are practical, insight-driven, and platform-native.\n\nBack Context:\n\nAravind Kumar is an AI Automation Expert. She runs an AI automation agency and consults businesses on AI adoption. She builds intelligent systems using tools like n8n, Make.com, and OpenAI — with a no-code approach. Her videos are made to simplify complex topics for real business owners, consultants, and automation enthusiasts.\n\nShe creates YouTube videos to:\n- Teach people how to build automations and AI systems\n- Share frameworks, client lessons, and insider knowledge\n- React to trends in automation, AI, and business tech\n- Break down problems she’s seen repeatedly across clients\n\nHer tone is clear, confident, and grounded — no fluff, no hype. Viewers trust her because she doesn’t make things sound easy just for views — she makes them understandable.\n\nYour Job:\n\nYour job is to turn approved Reddit posts into video ideas that are clickable, useful, and original. You are not summarizing the Reddit post. You are extracting the problem or insight and turning it into a YouTube concept aligned with Yashica’s voice and goals.\n\nWhat You Must Generate:\n\n1. youtube_title: Must be under 60 characters if possible, never more than 70. It should work on mobile and desktop. Focus on clarity, direction, and curiosity — not hype.\n2. video_hook: A one-liner that opens the video strong. It should state a challenge, bust a myth, or pose a bold thought.\n3. presentation_style: Is this a tutorial, teardown, strategy, reaction, mistake breakdown, etc.?\n4. problem_addressed: What is the underlying issue or tension this video helps solve?\n5. cta: A platform-aware call to action (e.g., “Comment if this sounds like your business,” “Watch the full build,” “DM me if you want this done.”)\n6. thumbnail_idea: Suggest a simple visual concept that would catch attention and hint at the core tension or value.\n\nTone Rules:\n\n- Avoid formula fatigue — don’t overuse \"How to\" or generic phrasing.\n- Don’t lean too heavily on tool names unless they’re central to the lesson.\n- Think like a strategist, not a clickbait writer.\n- Avoid exaggerating outcomes or overpromising automation magic.\n\nHere are a few title examples to understand the rhythm and style. Do not copy them — use them as inspiration.\n\n- I Built an AI Agent That Designs Marketing Creatives in Minutes\n- How to Automate Replies to Instagram DMs With AI (n8n + ManyChat)\n- Build an n8n AI Agent That Calls Customers for Appointment Reminders\n- How to Easily Add a Knowledge Base to Your AI Agent in n8n\n- How to Connect Retell AI's MCP Server to Claude\n- The AI Agent Node in n8n Made Easy (Complete Tutorial)\n- How to Easily Connect a Twilio Phone Number to Retell AI\n- Easiest Way to Set Up a Vector Store (Supabase + n8n)\n- How to Build Outbound AI Voice Agents with Retell AI\n\nOutput Format:\n\n{\n  \"youtube_title\": \"\",\n  \"video_hook\": \"\",\n  \"presentation_style\": \"\",\n  \"problem_addressed\": \"\",\n  \"cta\": \"\",\n  \"thumbnail_idea\": \"\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        -640
+      ],
+      "id": "afe50907-8cf5-4da4-b783-1f22e3cd2257",
+      "name": "Youtube Idea Generator Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        -420
+      ],
+      "id": "dd071b05-e315-4e41-814a-5851f4fbbc36",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        -420
+      ],
+      "id": "651b9b72-4813-4b5b-8724-e6965c3254a4",
+      "name": "Auto-fixing Output Parser1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1380,
+        -200
+      ],
+      "id": "3f7637a4-b830-41d6-a32a-742b3e1996bb",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"youtube_title\": \"The Hidden Trap in GPT-Powered Workflows\",\n  \"video_hook\": \"Everyone’s using GPT in their automations, but most are setting it up to fail.\",\n  \"presentation_style\": \"Tutorial + Insight Breakdown\",\n  \"problem_addressed\": \"People are connecting GPT to no-code tools like n8n but don’t understand how to structure prompts or design fallback logic, leading to fragile automations.\",\n  \"cta\": \"Watch the full build to see how we set it up right — and comment if your automations have broken like this before.\",\n  \"thumbnail_idea\": \"A broken robot icon with an error popup overlay, and bold text saying 'GPT Didn’t Work?'\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1600,
+        -200
+      ],
+      "id": "b9966b28-04a9-4416-aafb-0db18f8bf5ab",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appLILwDL1ygahdRK",
+          "mode": "list",
+          "cachedResultName": "AI Content Ideas Machine",
+          "cachedResultUrl": "https://airtable.com/appLILwDL1ygahdRK"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblmWT1ubYMCi8Yxv",
+          "mode": "list",
+          "cachedResultName": "Youtube Content Ideas",
+          "cachedResultUrl": "https://airtable.com/appLILwDL1ygahdRK/tblmWT1ubYMCi8Yxv"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "YouTube Title": "={{ $json.output.youtube_title }}",
+            "YouTube Hook": "={{ $json.output.video_hook }}",
+            "Presentation Strategy": "={{ $json.output.presentation_style }}",
+            "Problem It Solves": "={{ $json.output.problem_addressed }}",
+            "Thumbnail Inspo": "={{ $json.output.thumbnail_idea }}",
+            "CTA": "={{ $json.output.cta }}",
+            "Status": "Not Reviewed",
+            "Reddit URL": "={{ $('Edit Fields1').item.json.url }}",
+            "Reddit Title": "={{ $('Edit Fields1').item.json.title }}",
+            "Reddit Post": "={{ $('Edit Fields1').item.json.Text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "YouTube Title",
+              "displayName": "YouTube Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "YouTube Hook",
+              "displayName": "YouTube Hook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Presentation Strategy",
+              "displayName": "Presentation Strategy",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Problem It Solves",
+              "displayName": "Problem It Solves",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Thumbnail Inspo",
+              "displayName": "Thumbnail Inspo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CTA",
+              "displayName": "CTA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Not Reviewed",
+                  "value": "Not Reviewed"
+                },
+                {
+                  "name": "Reviewed",
+                  "value": "Reviewed"
+                },
+                {
+                  "name": "Added to Content Pipeline",
+                  "value": "Added to Content Pipeline"
+                },
+                {
+                  "name": "Rejected",
+                  "value": "Rejected"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reddit Title",
+              "displayName": "Reddit Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reddit URL",
+              "displayName": "Reddit URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reddit Post",
+              "displayName": "Reddit Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1640,
+        -640
+      ],
+      "id": "78265031-d3c3-4f58-a7a9-749154627867",
+      "name": "YouTube-Ledger-AirTable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "alwpetOLM14qVeQU",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1140,
+        560
+      ],
+      "id": "f36cda89-4c00-4b8f-9b2d-81520a17bdad",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        300
+      ],
+      "id": "d60d0219-d8b3-4d9c-b9a9-b770df021280",
+      "name": "Auto-fixing Output Parser2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        540
+      ],
+      "id": "81349cbd-40ca-4e9b-86e4-a552911af68a",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"linkedin_hook\": \"The AI broke my automation. No, the setup did.\",\n  \"angle_breakdown\": \"Someone shared a Reddit post blaming GPT for breaking their lead scoring automation in n8n. It’s a common frustration — but it's almost always a system design issue, not the AI's fault. We’ll break it down and show how to fix it.\",\n  \"core_value\": \"AI tools aren’t unreliable — most people just use them without constraints or structure. In automation, clarity > cleverness. What makes these systems work is good logic, fallback design, and knowing where not to trust AI blindly.\",\n  \"cta\": \"Want to learn how to set this up right? Watch the GPT scoring automation build on my YouTube channel. Or DM me if you want one built for your business.\",\n  \"visual_idea\": \"Split-slide: Left side says 'AI Broke It?' in bold red, right side shows 'Your Setup Did.' with a visual of a broken logic flow.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1500,
+        520
+      ],
+      "id": "c6d77196-f65a-4d42-826f-ffcfd2b87e8c",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Title:{{ $('Edit Fields1').item.json.title }}\n\nText:{{ $('Edit Fields1').item.json.Text }}\n\nReason for Approval: {{ $json.output.reason }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are Aravind Kumar’s LinkedIn content strategist. Your job is to take approved Reddit posts and turn them into impactful, structured, value-first LinkedIn posts. You are not summarizing the post — you are finding a way to reframe or respond to it in Yashica’s tone and format.\n\nBack Context:\n\nAravind Kumar is an AI Automation Expert who builds real systems for real businesses. She uses no-code tools like n8n, Make.com, OpenAI, and more to solve operational problems and drive growth. Her content is practical, experienced, no-fluff, and results-focused.\n\nShe uses LinkedIn to:\n- Deliver real insights from client work\n- Break myths and assumptions around AI and automation\n- Share frameworks and tactical breakdowns\n- Offer mindset motivation to help people move forward\n- Show how tech translates to results\n\nShe doesn’t chase engagement. She builds credibility and trust by giving away clarity.\n\nPost Style Guidelines:\n\nYashica's LinkedIn post structure typically follows one of these styles:\n1. Short myth-busting or mindset shift post with personal insight (e.g., \"Do I need a tech background to build AI agents?\")\n2. Tactical story post about a recent project (e.g., \"We turned AI into a sales rep — and it 3x’d client bookings.\")\n3. Step-by-step breakdowns of how something works, with a CTA to learn more or reach out\n4. High-signal commentary on current trends, tools, or problems people are facing\n\nWhat You Must Generate:\n\n1. linkedin_hook: A strong 1–2 line opening that either challenges an assumption, introduces a result, or asks a bold question\n2. angle_breakdown: A short summary of the core idea and how Yashica will approach it (reframe, insight, walkthrough, etc.)\n3. core_value: The actual lesson, perspective, or takeaway the audience should leave with\n4. cta: Optional. Could be a YouTube playlist, DM prompt, comment request, or repost ask — but only if relevant\n5. visual_idea: Suggest a visual concept (text post layout, carousel theme, or single slide image idea) that matches the post type\n\nTone Rules:\n- Confident, but grounded in lived experience\n- Practical, not preachy\n- Avoid hype or cliché startup talk\n- Use line breaks and formatting to create skimmable, high-impact posts\n- You’re not a brand bot — you’re a strategist\n\nOutput only in this structured JSON format:\n\n{\n  \"linkedin_hook\": \"\",\n  \"angle_breakdown\": \"\",\n  \"core_value\": \"\",\n  \"cta\": \"\",\n  \"visual_idea\": \"\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        60
+      ],
+      "id": "03503623-42cb-4907-9222-1128efa08b2c",
+      "name": "LinkedIn Idea Generator Agent"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appLILwDL1ygahdRK",
+          "mode": "list",
+          "cachedResultName": "AI Content Ideas Machine",
+          "cachedResultUrl": "https://airtable.com/appLILwDL1ygahdRK"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblWmJuYrujRzGSYO",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Content Ideas",
+          "cachedResultUrl": "https://airtable.com/appLILwDL1ygahdRK/tblWmJuYrujRzGSYO"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "CTA": "={{ $json.output.cta }}",
+            "Status": "Not Reviewed",
+            "Reddit URL": "={{ $('Edit Fields1').item.json.url }}",
+            "Reddit Title": "={{ $('Edit Fields1').item.json.title }}",
+            "Reddit Post": "={{ $('Edit Fields1').item.json.Text }}",
+            "LinkedIn Hook": "={{ $json.output.linkedin_hook }}",
+            "Angle/Breakdown": "={{ $json.output.angle_breakdown }}",
+            "Visual Idea": "={{ $json.output.visual_idea }}",
+            "Lesson/Insight": "={{ $json.output.core_value }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "LinkedIn Hook",
+              "displayName": "LinkedIn Hook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Angle/Breakdown",
+              "displayName": "Angle/Breakdown",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Lesson/Insight",
+              "displayName": "Lesson/Insight",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Visual Idea",
+              "displayName": "Visual Idea",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CTA",
+              "displayName": "CTA",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Not Reviewed",
+                  "value": "Not Reviewed"
+                },
+                {
+                  "name": "Reviewed",
+                  "value": "Reviewed"
+                },
+                {
+                  "name": "Added to Content Pipeline",
+                  "value": "Added to Content Pipeline"
+                },
+                {
+                  "name": "Rejected",
+                  "value": "Rejected"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reddit Title",
+              "displayName": "Reddit Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reddit URL",
+              "displayName": "Reddit URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reddit Post",
+              "displayName": "Reddit Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1600,
+        80
+      ],
+      "id": "1c14cf2d-2c26-4621-bef4-a58f2900a23b",
+      "name": "Linked In-Ledger-AirTable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "alwpetOLM14qVeQU",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "MakeRequest-Scrape",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "get Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MakeRequest-Scrape": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get Output": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rejected-Ledger-Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Youtube Idea Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LinkedIn Idea Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Youtube Idea Generator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Youtube Idea Generator Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Youtube Idea Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "YouTube-Ledger-AirTable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LinkedIn Idea Generator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "LinkedIn Idea Generator Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Idea Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "Linked In-Ledger-AirTable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

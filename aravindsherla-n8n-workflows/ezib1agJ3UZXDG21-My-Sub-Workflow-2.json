@@ -1,0 +1,702 @@
+{
+  "name": "My Sub-Workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Prompt"
+            },
+            {
+              "name": "n",
+              "type": "number"
+            },
+            {
+              "name": "Model"
+            },
+            {
+              "name": "Size"
+            },
+            {
+              "name": "Quality"
+            },
+            {
+              "name": "Filename"
+            }
+          ]
+        }
+      },
+      "id": "3958d45e-840e-469a-b756-65b63b11b7dd",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        0
+      ],
+      "id": "d80599f0-e55f-4cc8-b04d-f728f430103d",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('When Executed by Another Workflow').item.json.Filename }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1tG2vAn6MO_VX8LHTnettCBnGyAUyA5Sx",
+          "mode": "list",
+          "cachedResultName": "N8N Image Agent",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1tG2vAn6MO_VX8LHTnettCBnGyAUyA5Sx"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        900,
+        0
+      ],
+      "id": "c163351c-33b6-4041-badb-0b60ba22797a",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "f38ELHOeGv7YjyMV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "63bd9ce9-4219-487f-b2f4-c95e733e9252",
+              "name": "Image Link",
+              "value": "={{ $json.webViewLink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1160,
+        0
+      ],
+      "id": "32b81e81-1f4c-42c0-8248-51fcef5e184e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "={{$json.Model}}"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.Prompt }}"
+            },
+            {
+              "name": "n",
+              "value": "={{$json.n}}"
+            },
+            {
+              "name": "size",
+              "value": "={{ $json.Size }}"
+            },
+            {
+              "name": "quality",
+              "value": "={{ $json.Quality }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "f0003f8f-9994-421c-a468-2614c6b512db",
+      "name": "Create Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "78d024b9-1d99-45b6-a29d-48c8830ffe80",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Image Link"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        0
+      ],
+      "id": "7712f16e-7311-4d6d-b465-655f30726fe1",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "content": "Sends a request to OpenAI's image generation API with:\n\nPrompt: Text description of the desired image\nModel: dall-e-2, dall-e-3, or gpt-image-1\nSize: Image dimensions\nQuality: Image quality level\nNumber of images: How many to generate",
+        "height": 260,
+        "width": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "29619f0a-741e-4132-bd3b-7a7b284c831b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Handles the possibility of multiple images being generated",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "da34bfb3-4b77-4a3e-afcd-0ebcb9aa6b07",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Saves the image to a specific folder in Google Drive",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        860,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "cce42cdf-a9d4-4a65-b8be-0180a8a412c1",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Formats the Google Drive link for display to the user",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "e297479c-1d8a-4ff6-b86a-34bd47a49a5b",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Combines multiple image results (if more than one was generated)",
+        "height": 100,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1360,
+        220
+      ],
+      "typeVersion": 1,
+      "id": "1331ec44-c6fb-46f5-b5d0-f54df4e9236f",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.Image }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2100,
+        200
+      ],
+      "id": "1d0b95d4-43cc-4ba1-94a6-8c3fd6098389",
+      "name": "Download Image"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4d7ec0ea-1c30-4a8f-a990-2283f769f9d7",
+              "leftValue": "={{ $json.Image }}",
+              "rightValue": "drive.google.com",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1900,
+        -40
+      ],
+      "id": "ecf4a340-b88e-4fd7-bf5c-1cc194787154",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.Image }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2140,
+        -240
+      ],
+      "id": "e5178f20-8557-4600-ab1c-640e094f6f84",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "f38ELHOeGv7YjyMV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Formats the Google Drive link for display to the user",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3040,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "c949e023-9d65-41a7-b646-1618d9a5eb87",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2580,
+        200
+      ],
+      "id": "02285cf1-57c1-42f0-9e92-02f555779222",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $('When Executed by Another Workflow').item.json.Prompt }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "image[]",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "={{ $('When Executed by Another Workflow').item.json.Model }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2360,
+        200
+      ],
+      "id": "f0c4374b-ad93-41c5-86fc-e4e293bfb026",
+      "name": "Create Image1",
+      "credentials": {
+        "openAiApi": {
+          "id": "KVcxES2D9yziCKLc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('When Executed by Another Workflow').item.json.FileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1tG2vAn6MO_VX8LHTnettCBnGyAUyA5Sx",
+          "mode": "list",
+          "cachedResultName": "N8N Image Agent",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1tG2vAn6MO_VX8LHTnettCBnGyAUyA5Sx"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2860,
+        200
+      ],
+      "id": "9ee278e8-1d57-4cec-aa2e-dea504ae5a61",
+      "name": "Google Drive2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "f38ELHOeGv7YjyMV",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "63bd9ce9-4219-487f-b2f4-c95e733e9252",
+              "name": "Image Link",
+              "value": "={{ $json.webViewLink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3080,
+        200
+      ],
+      "id": "4b466352-8b81-46a1-afcd-72c5baa0b3d1",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "Checks if the image is from Google Drive or an external URL",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1760,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "bf41ef5c-5fae-45a0-871c-79efd6d78c69",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "If from Google Drive: Downloads directly from Drive",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2320,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "0a3f45ac-0ac9-46b7-9149-352ef5fc7878",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "If from external URL: Uses HTTP Request to download",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2060,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "2a50fe4c-865d-4274-b35a-98191d08e0c1",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "Sends image and edit instructions to OpenAI's edit API",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2320,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "25f78ca4-c8e3-4494-899f-6509ba83332e",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "Transforms the edited image response into a file",
+        "height": 80,
+        "width": 180
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2540,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "5e8efa2c-f8d1-4be8-8ca6-7e35f51723f4",
+      "name": "Sticky Note10"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Create Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Image": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Create Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Create Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Image1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "Prompt": "A playful cat running around in a sunny park, with green grass, colorful flowers, and a clear blue sky. The cat is mid-stride, with its fur slightly ruffled by the wind, and a joyful expression on its face. The park is lively with trees in the background and a few birds flying in the sky.",
+          "n": 1,
+          "Model": "gpt-image-1",
+          "Size": "1024x1024",
+          "Quality": "high",
+          "Filename": "cat_running_park"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

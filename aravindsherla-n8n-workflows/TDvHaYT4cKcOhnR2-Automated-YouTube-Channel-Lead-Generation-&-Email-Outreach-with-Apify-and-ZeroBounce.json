@@ -1,0 +1,443 @@
+{
+  "name": "Automated YouTube Channel Lead Generation & Email Outreach with Apify and ZeroBounce",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://airtable.com/appjaqV0O7FkXT2qj/shrst7GnlbzMDz4te"
+        },
+        "tableId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://airtable.com/appjaqV0O7FkXT2qj/tblTAvRqVFOo5AVDF/viwEp0ssaidZOo4nl?blocks=hide"
+        },
+        "triggerField": "Keyword",
+        "additionalFields": {}
+      },
+      "id": "81c028ad-2f7e-4baa-ba47-e22aa74a31b0",
+      "name": "Fetch Keywords from Airtable",
+      "type": "n8n-nodes-base.airtableTrigger",
+      "position": [
+        1520,
+        1160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/serp",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json.fields.Keyword }}"
+            },
+            {
+              "name": "country",
+              "value": "us"
+            },
+            {
+              "name": "language",
+              "value": "en"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6eba7223-eee8-41eb-895b-8e1b5a4eab91",
+      "name": "Check Rank via Firecrawl",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1820,
+        940
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {},
+      "id": "23bcc684-74c9-422e-8c1a-44a6f19b2f17",
+      "name": "Combine Airtable + Firecrawl Result",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2100,
+        1140
+      ],
+      "typeVersion": 3.1
+    },
+    {
+      "parameters": {
+        "jsCode": "// Find the item that contains results\nconst resultItem = items.find(item => Array.isArray(item.json.results));\nconst dataItem = items.find(item => item.json.fields && item.json.fields[\"Target URL\"]);\n\n// Defensive check\nif (!resultItem || !dataItem) {\n  throw new Error(\"Missing result or Airtable data\");\n}\n\nconst results = resultItem.json.results;\nconst fields = dataItem.json.fields;\n\nconst targetUrl = fields[\"Target URL\"];\nconst keyword = fields[\"Keyword\"];\n\nlet rank = null;\n\nfor (let i = 0; i < results.length; i++) {\n  const resultUrl = results[i].url?.toLowerCase() || '';\n  if (resultUrl.includes(targetUrl.toLowerCase())) {\n    rank = i + 1;\n    break;\n  }\n}\n\nreturn [\n  {\n    json: {\n      keyword,\n      target_url: targetUrl,\n      current_rank: fields[\"Current Rank\"],\n      new_rank: rank !== null ? rank : \"Not in Top 10\",\n      rank_changed: rank !== null && rank !== fields[\"Current Rank\"],\n      notes: fields[\"Notes\"] || \"\",\n      airtable_id: dataItem.json.id,\n      raw_results: results // Optional\n    }\n  }\n];\n"
+      },
+      "id": "faae5b6c-a795-4b28-b040-13b47f414e36",
+      "name": "Compare Ranks",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2420,
+        1140
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appjaqV0O7FkXT2qj",
+          "cachedResultUrl": "https://airtable.com/appjaqV0O7FkXT2qj",
+          "cachedResultName": "Table no.1"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tblTAvRqVFOo5AVDF",
+          "cachedResultUrl": "https://airtable.com/appjaqV0O7FkXT2qj/tblTAvRqVFOo5AVDF",
+          "cachedResultName": "Table 1"
+        },
+        "columns": {
+          "value": {
+            "id": "={{ $json.airtable_id }}",
+            "Current Rank": "={{ $json.new_rank }}"
+          },
+          "schema": [
+            {
+              "id": "id",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "readOnly": true,
+              "required": false,
+              "displayName": "id",
+              "defaultMatch": true
+            },
+            {
+              "id": "Keyword",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "readOnly": false,
+              "required": false,
+              "displayName": "Keyword",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Target URL",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "readOnly": false,
+              "required": false,
+              "displayName": "Target URL",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Rank",
+              "type": "number",
+              "display": true,
+              "removed": false,
+              "readOnly": false,
+              "required": false,
+              "displayName": "Current Rank",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "id"
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ba027340-05d0-48a0-b158-c7361b3652e4",
+      "name": "Update Airtable Record",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        2640,
+        1140
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e16a90ab-e577-46f8-abf2-9c8de77059fc",
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              },
+              "leftValue": "={{ $('Compare Ranks').item.json.current_rank }}",
+              "rightValue": "={{ $('Compare Ranks').item.json.new_rank }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9983d259-e10d-4d72-a390-0446245ad40a",
+      "name": "Check if Rank Changed",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2980,
+        1140
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "C08TTV0CC3E",
+          "cachedResultName": "all-nathing"
+        },
+        "text": "hi",
+        "otherOptions": {}
+      },
+      "id": "805e8328-614f-4d55-87a8-25313a2d0e04",
+      "name": "Send Slack Notification",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        3260,
+        960
+      ],
+      "webhookId": "f0ed69d2-fcd1-457e-b981-614ec29954cc",
+      "typeVersion": 2.3
+    },
+    {
+      "parameters": {},
+      "id": "049a4c80-e3cf-47bd-bd54-eb0c08bc78fe",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        3260,
+        1340
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🔍 **Section 1: Fetch and Merge Data**\n\n### 🎯 Goal: Get keyword data from Airtable, fetch rank info from Firecrawl, and merge both for comparison.\n\n---\n\n### 🧱 **Step 1: Fetch Keywords from Airtable**\n\n**Node Name:** `Fetch Keywords from Airtable`\n**📌 Description:**\nTriggers when a new or updated record is found in Airtable. It fetches the following fields:\n\n* `Keyword`\n* `Target URL`\n* `Current Rank`\n\nThis is the starting point of the workflow.\n\n---\n\n### 🌐 **Step 2: Check Rank via Firecrawl**\n\n**Node Name:** `Check Rank via Firecrawl`\n**📌 Description:**\nSends a POST request to [Firecrawl API](https://api.firecrawl.dev) with the `Keyword` as the main parameter. It returns updated ranking information for that keyword.\n\n---\n\n### 🔗 **Step 3: Combine Airtable + Firecrawl Result**\n\n**Node Name:** `Combine Airtable + Firecrawl Result`\n**📌 Description:**\nA `Merge` node that combines:\n\n* The original data from Airtable\n* The response from Firecrawl\n\nThis prepares a unified object to be used in the next comparison step.\n",
+        "height": 1520,
+        "width": 760
+      },
+      "id": "40ebab59-002e-47ec-9234-41e4ed1c8342",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1480,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🧠 **Section 2: Compare & Update Airtable Record**\n\n### 🎯 Goal: Check if the rank has changed. If yes, update Airtable with the new rank.\n\n---\n\n### 🧮 **Step 4: Compare Ranks**\n\n**Node Name:** `Compare Ranks`\n**📌 Description:**\nA `Code` node that compares the `Current Rank` from Airtable and the `New Rank` from Firecrawl.\nIt adds a new field:\n\n```js\nrankChanged: true // or false\n```\n\nThis acts as the decision flag for the next step.\n\n---\n\n### 📝 **Step 5: Update Airtable Record**\n\n**Node Name:** `Update Airtable Record`\n**📌 Description:**\nUses the unique record ID to update the Airtable row with the new rank.\nOptional fields to update:\n\n* `New Rank`\n* `Rank Changed Date`\n* Any notes or audit logs\n\n---\n\n",
+        "height": 1180,
+        "width": 460,
+        "color": 3
+      },
+      "id": "823eadcd-83d6-421e-9425-4eba8c575938",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2340,
+        180
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## ✅ **Section 3: Conditional Alert**\n\n### 🎯 Goal: Notify via Slack if the rank has changed.\n\n---\n\n### 🔀 **Step 6: Check if Rank Changed**\n\n**Node Name:** `Check if Rank Changed`\n**📌 Description:**\nAn `If` node that checks the `rankChanged` flag from the previous step.\n\n* **true:** Proceed to send Slack notification\n* **false:** Do nothing and stop workflow here\n\n---\n\n### 💬 **Step 7: Send Slack Notification**\n\n**Node Name:** `Send Slack Notification`\n**📌 Description:**\nPosts a message in a specified Slack channel with:\n\n* 📈 `Keyword`\n* 🔗 `Target URL`\n* 🆕 `New Rank`\n* 🕓 Timestamp or context\n\nThis ensures the team is alerted about SEO improvements or drops.\n",
+        "height": 1220,
+        "width": 500,
+        "color": 7
+      },
+      "id": "e28c0ff7-2ed1-4c97-abe2-f6986bf56bec",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2920,
+        260
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "=======================================\n            WORKFLOW ASSISTANCE\n=======================================\nFor any questions or support, please contact:\n    Yaron@nofluff.online\n\nExplore more tips and tutorials here:\n   - YouTube: https://www.youtube.com/@YaronBeen/videos\n   - LinkedIn: https://www.linkedin.com/in/yaronbeen/\n=======================================\n",
+        "height": 320,
+        "width": 1300,
+        "color": 4
+      },
+      "id": "58686932-de5c-4651-a7b1-e9e37c022994",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -200,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "\n# 🚀 **Automated Rank Tracker Workflow (n8n)**\n\n---\n\n## 📌 **Purpose**\n\nThis workflow is designed to **automatically monitor keyword rankings**, compare them with new data from an SEO API (Firecrawl), and **alert your team on Slack** whenever there’s a change. It helps you stay on top of your SEO game **without manual checking**! ⚡\n\n---\n\n## 🧠 **What It Does — In 3 Simple Steps**\n\n---\n\n### 🔍 **1. Fetch & Merge Data**\n\n📦 **Source:** Airtable\n🌐 **Analyzer:** Firecrawl API\n🔗 **Process:** Merge both for side-by-side comparison\n\n* ✅ Grabs `Keyword`, `Target URL`, and `Current Rank` from Airtable\n* 🌐 Sends the `Keyword` to Firecrawl API to get the **Latest Rank**\n* 🔗 Merges original Airtable data + Firecrawl result\n* 🛠️ Prepares a complete object for decision-making\n\n---\n\n### 🧮 **2. Compare & Update Airtable**\n\n🧠 **Compare:** Current Rank vs Latest Rank\n📝 **Update:** Airtable if there's a difference\n\n* 🔍 Uses a Code node to check:\n\n  ```js\n  if (currentRank !== latestRank) → rankChanged = true\n  ```\n* 📝 If there's a change, updates the original Airtable row with:\n\n  * New Rank\n  * Timestamp\n  * Optional status/comments\n\n---\n\n### ✅ **3. Alert If Rank Changed**\n\n🧪 **Decision:** Did rank change?\n📣 **Notify:** Slack if yes\n\n* 🤖 Uses an `If` node to evaluate the `rankChanged` flag\n* 💬 Posts a message in Slack like:\n\n  > “🎯 Keyword: *‘best running shoes’* rank has changed from *5 ➡ 2*! 🚀”\n\n---\n\n## 🧩 **Visual Flow Overview**\n\n```\nAirtable Trigger\n   ↓\nFirecrawl HTTP Request\n   ↓\nMerge Results\n   ↓\nCompare Ranks (Code Node)\n   ↓\nUpdate Airtable\n   ↓\nCheck If Rank Changed (If Node)\n   ↳ true → Send Slack Notification\n```\n\n---\n\n\n## 💡 Final Thoughts\n\nThis elegant workflow combines **data fetching, comparison, storage, and notification** in a streamlined way. It’s ideal for:\n\n* SEO Teams\n* Content Managers\n* Digital Agencies\n* Growth Hackers\n\n✨ **Set it and forget it — your ranks are now being watched 24/7.**\n\n---\n\nLet me know if you'd like a **shareable Markdown version** or a **Notion-style document**.\n",
+        "height": 2178,
+        "width": 1289,
+        "color": 4
+      },
+      "id": "a7a8719a-820c-47e5-b292-9b65548cc7bd",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -200,
+        180
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Compare Ranks": {
+      "main": [
+        [
+          {
+            "node": "Update Airtable Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Rank Changed": {
+      "main": [
+        [
+          {
+            "node": "Send Slack Notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Airtable Record": {
+      "main": [
+        [
+          {
+            "node": "Check if Rank Changed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Rank via Firecrawl": {
+      "main": [
+        [
+          {
+            "node": "Combine Airtable + Firecrawl Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Keywords from Airtable": {
+      "main": [
+        [
+          {
+            "node": "Check Rank via Firecrawl",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Combine Airtable + Firecrawl Result",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Combine Airtable + Firecrawl Result": {
+      "main": [
+        [
+          {
+            "node": "Compare Ranks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "Check Rank via Firecrawl": [
+      {
+        "json": {
+          "results": [
+            {
+              "url": "https://moz.com/blog/seo-automation-tools",
+              "title": "Top SEO Automation Tools for 2025",
+              "description": "Explore the best SEO automation tools for boosting rankings in 2025."
+            },
+            {
+              "url": "https://your-site.com/seo-guide",
+              "title": "Beginner’s Guide to SEO Automation",
+              "description": "Learn how to automate your SEO efforts effectively."
+            },
+            {
+              "url": "https://ahrefs.com/blog/automate-keyword-research",
+              "title": "How to Automate Keyword Research",
+              "description": "Streamline your SEO keyword research using automation."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": null
+}
