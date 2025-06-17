@@ -301,7 +301,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer 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"
+              "value": "Bearer <apikey> "
             }
           ]
         },
@@ -573,7 +573,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer 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"
+              "value": "Bearer <api key>"
             }
           ]
         },
@@ -620,7 +620,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer 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"
+              "value": "Bearer <api key>"
             }
           ]
         },
@@ -667,7 +667,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer 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"
+              "value": "Bearer <api key>"
             }
           ]
         },
@@ -714,7 +714,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer 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"
+              "value": "Bearer <api key>"
             }
           ]
         },
