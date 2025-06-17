@@ -1,5 +1,4 @@
-Thanks for sharing the image! Here's a clean transcription and structuring of the content from your handwritten notes for easy reference and future use in presentations, documents, or discussions:
-
+ChatGpt - AI Automation.md indetail below usecases
 ---
 
 ### **4 Critical Challenges Solved – ML Deep Dive (KISS)**
