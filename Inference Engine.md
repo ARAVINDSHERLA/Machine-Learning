@@ -1,11 +1,8 @@
----
 
 ## 🧠 **Inference Engine in AI/ML — Explained**
 
 An **Inference Engine** is the **core reasoning component** of an intelligent system (like Expert Systems, Rule Engines, or AI Agents).
 It **applies logic and knowledge** to draw conclusions or make predictions from a given **knowledge base** or **model**.
-
----
 
 ### ⚙️ **1. Core Definition**
 
@@ -13,8 +10,6 @@ It **applies logic and knowledge** to draw conclusions or make predictions from 
 
 It answers:
 👉 “Given what I know, what can I deduce?”
-
----
 
 ### 🧩 **2. Components of an Inference Engine**
 
@@ -25,7 +20,6 @@ It answers:
 | **Inference Mechanism**        | Applies logical reasoning (rule matching, chaining, etc.) | Uses rules to infer “Patient may have flu.” |
 | **Explanation Facility**       | Describes how the conclusion was reached.                 | “Because fever and cough were present.”     |
 
----
 
 ### 🔄 **3. Types of Reasoning Methods**
 
@@ -35,7 +29,6 @@ It answers:
 | **Backward Chaining (Goal-driven)** | Starts from goal → checks if rules can satisfy it.        | Used in Prolog or query-based AI systems.      |
 | **Hybrid Reasoning**                | Mix of both — combines deductive and inductive reasoning. | Used in intelligent agent systems.             |
 
----
 
 ### 🤖 **4. Inference Engine in AI/ML Contexts**
 
@@ -48,8 +41,6 @@ It answers:
 ```prolog
 IF temperature > 38 AND cough = true THEN diagnosis = "flu"
 ```
-
----
 
 #### 🔸 b. **Machine Learning Models (Inference Stage)**
 
@@ -77,8 +68,6 @@ Frameworks:
 * TorchScript (PyTorch)
 * TensorFlow Lite
 
----
-
 #### 🔸 c. **Agentic or Knowledge-driven AI**
 
 In **Agentic AI or Cognitive Systems**, the inference engine:
@@ -86,8 +75,6 @@ In **Agentic AI or Cognitive Systems**, the inference engine:
 * Works alongside a **knowledge graph** or **semantic memory**.
 * Performs **symbolic reasoning** (logic) + **statistical inference** (ML).
 * Example: AI agent infers intent + next action from user context.
-
----
 
 ### ⚡ **5. Types of Inference Techniques**
 
@@ -98,8 +85,6 @@ In **Agentic AI or Cognitive Systems**, the inference engine:
 | **Abductive**     | Infers best explanation for an observation (reasoning under uncertainty). |
 | **Probabilistic** | Uses probability and Bayesian logic to reason.                            |
 
----
-
 ### 🧠 **6. Example Use Cases**
 
 | Use Case                 | Example Inference                                         |
@@ -108,8 +93,6 @@ In **Agentic AI or Cognitive Systems**, the inference engine:
 | **Fraud Detection**      | “If transaction > X and country ≠ home → possible fraud.” |
 | **Autonomous Driving**   | “If object ahead is pedestrian → apply brakes.”           |
 | **Chatbots / AIML Bots** | “If user asks about price → show product details.”        |
-
----
 
 ### 💬 **7. Inference Engine in AIML (Chatbot Context)**
 
@@ -138,8 +121,6 @@ AIML interpreters like **Program AB**, **PyAIML**, or **Pandorabots** include a 
 1. Parses input → finds the best matching pattern.
 2. Executes logic → returns response.
 
----
-
 ### 🧠 **8. Real-World Implementations**
 
 | Framework / Library          | Inference Type   | Used For                        |
@@ -150,8 +131,6 @@ AIML interpreters like **Program AB**, **PyAIML**, or **Pandorabots** include a 
 | **PyAIML**                   | Pattern-based    | Chatbot inference               |
 | **OpenAI, LangChain Agents** | Hybrid reasoning | LLM-based cognitive inference   |
 
----
-
 ### 🚀 **9. Summary**
 
 | Concept | Symbolic AI             | ML / Neural Inference     |
@@ -160,8 +139,6 @@ AIML interpreters like **Program AB**, **PyAIML**, or **Pandorabots** include a 
 | Logic   | Deterministic reasoning | Probabilistic/statistical |
 | Output  | Derived conclusions     | Predictions               |
 | Example | Expert System           | Trained Model             |
-
----
 
 Would you like me to show you:
 ✅ a **code example** of a simple inference engine (rule-based)
